@@ -27,27 +27,27 @@ jobs:
       - run: docker build --tag=public.ecr.aws/o6u7e2l7/civonavigate2023:${GITHUB_REPOSITORY#*/}-$GITHUB_SHA ./source
 
       # Login to AWS
-      #- uses: aws-actions/configure-aws-credentials@v1
-      #  with:
-      #    role-to-assume: ${{ secrets.AWS_ROLE }}
-      #    role-session-name: ${{ secrets.SESSION_NAME }}
-      #    aws-region: us-east-1
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: ${{ secrets.SESSION_NAME }}
+          aws-region: us-east-1
 
       # Get docker credentials
-      #- name: Login to Amazon ECR Private
-      #  id: login-ecr
-      #  uses: aws-actions/amazon-ecr-login@v1
-      #  with: 
-      #    registry-type: public
+      - name: Login to Amazon ECR Private
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with: 
+          registry-type: public
 
 
       # Push to our registry
       - run: docker push public.ecr.aws/o6u7e2l7/civonavigate2023:${GITHUB_REPOSITORY#*/}-$GITHUB_SHA
 
       # Sign our image using the GitHub OIDC Token
-      #- name: Sign image with GitHub OIDC
-      #  run: |-
-      #     COSIGN_EXPERIMENTAL=1 cosign sign public.ecr.aws/o6u7e2l7/civonavigate2023:${GITHUB_REPOSITORY#*/}-$GITHUB_SHA
+      - name: Sign image with GitHub OIDC
+        run: |-
+           COSIGN_EXPERIMENTAL=1 cosign sign public.ecr.aws/o6u7e2l7/civonavigate2023:${GITHUB_REPOSITORY#*/}-$GITHUB_SHA
 
       # Check out our application's infrastructure repository
       - uses: actions/checkout@v3
